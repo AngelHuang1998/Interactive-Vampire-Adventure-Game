@@ -14,10 +14,10 @@ def load_file_content(file_name):
     檢查檔案是否存在並讀取內容。
     如果檔案不存在，則提示錯誤並結束程式。
     """
-    if not os.path.exists(file_name):
+    if not os.path.exists(file_name):    # 檔案不存在  #os 模組提供 path.exists() 方法來確認指定的檔案或資料夾是否存在。
         print(f"Error: {file_name} is missing. Please add it to the program directory.")
         sys.exit()
-    with open(file_name, "r", encoding="utf-8") as file:
+    with open(file_name, "r", encoding="utf-8") as file:   #檔案存在
         return file.read()
 
 def get_input(prompt):
@@ -44,20 +44,67 @@ def play_sound_effect(sound_name):
     if sound_name in sound_files and os.path.exists(sound_files[sound_name]):
         try:
             pygame.mixer.init()
-            pygame.mixer.music.load(sound_files[sound_name])
-            pygame.mixer.music.set_volume(1.0)
-            pygame.mixer.music.play()
+            pygame.mixer.music.load(sound_files[sound_name])  #載入音效檔案
+            pygame.mixer.music.set_volume(1.0)  #設置音量
+            pygame.mixer.music.play()   #播放音效
 
-            # 設置播放的最大等待時間
+            # 設置播放的時長不超過10秒
             start_time = time.time()
-            while pygame.mixer.music.get_busy():
+            while pygame.mixer.music.get_busy():  
                 if time.time() - start_time > 10:
                     break
-                time.sleep(0.1)
-        except Exception as e:
+                time.sleep(0.1)  # 讓程式每 0.1 秒檢查一次音樂是否還在播放，減少 CPU 資源消耗
+        except Exception as e:    # try 內的任何一行發生錯誤，Python 會立刻進入 except 區塊，而不會讓程式崩潰
             print(f"Error playing sound {sound_files[sound_name]}: {e}")
     else:
         print(f"Error: {sound_files.get(sound_name, 'Unknown')} not found.")
+
+
+
+def play_sound_effect(sound_name):
+    """
+    播放指定的音效檔案。
+    如果音效檔案存在，則使用 pygame 模組播放。
+    如果檔案缺失或發生錯誤，則輸出相應提示。
+    """
+    sound_files = {
+        "poor": "poor.mp3",
+        "rich": "rich.mp3"
+    }
+
+    # 檢查sound_name 是否在 sound_files 中，且對應的音效檔案是否存在
+    if sound_name in sound_files and os.path.exists(sound_files[sound_name]):
+
+        try:
+            pygame.mixer.init()
+            pygame.mixer.music.load(sound_files[sound_name])  #載入音效檔案
+        
+       
+        #try 內的任何一行發生錯誤，Python 會立刻進入 except 區塊，而不會讓程式崩潰
+        except pygame.error as e:     # pygame相關的錯誤
+            print(f"Pygame error while loading {sound_files[sound_name]}: {e}")
+        except FileNotFoundError:     #檔案遺失錯誤
+            print(f"Error: {sound_files[sound_name]} not found.")
+        except Exception as e:        #其他未預期的錯誤
+            print(f"Unexpected error: {e}")
+
+
+        # 只有當 try 沒有錯誤時，才執行這部分
+        else:  
+            pygame.mixer.music.set_volume(1.0)   #設置音量
+            pygame.mixer.music.play()   #播放音效
+
+            start_time = time.time()     
+            while pygame.mixer.music.get_busy():   # 設置播放的時長不超過10秒
+                if time.time() - start_time > 10:
+                    break
+                time.sleep(0.1)   # 讓程式每 0.1 秒檢查一次音樂是否還在播放，減少 CPU 資源消耗
+
+
+    else:   # 如果 sound_name 不在 sound_files中，或是對應的音效檔案不存在
+        print(f"Error: {sound_files.get(sound_name, 'Unknown')} not found.")
+
+
 
 def draw_diamond(layers):
     """

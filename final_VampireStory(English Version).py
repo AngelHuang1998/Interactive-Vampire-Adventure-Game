@@ -30,34 +30,48 @@ def get_input(prompt):
         sys.exit()
     return user_input
 
+
 def play_sound_effect(sound_name):
     """
-    Plays a specified sound effect file.
-    If the sound file exists, it uses the pygame module to play it.
-    If the file is missing or an error occurs, an appropriate message is displayed.
+    Play the specified sound effect file.
+    If the sound effect file exists, use the pygame module to play it.
+    If the file is missing or an error occurs, output an appropriate message.
     """
     sound_files = {
         "poor": "poor.mp3",
         "rich": "rich.mp3"
     }
 
+    # Check if sound_name is in sound_files and if the corresponding sound file exists
     if sound_name in sound_files and os.path.exists(sound_files[sound_name]):
+
         try:
             pygame.mixer.init()
-            pygame.mixer.music.load(sound_files[sound_name])
-            pygame.mixer.music.set_volume(1.0)
-            pygame.mixer.music.play()
+            pygame.mixer.music.load(sound_files[sound_name])  # Load the sound effect file
+        
+        # If any line inside the try block raises an error, Python will immediately enter the except block without crashing the program.
+        except pygame.error as e:  # Handle pygame-related errors
+            print(f"Pygame error while loading {sound_files[sound_name]}: {e}")
+        except FileNotFoundError:  # Handle file not found errors
+            print(f"Error: {sound_files[sound_name]} not found.")
+        except Exception as e:  # Handle other unexpected errors
+            print(f"Unexpected error: {e}")
 
-            # Set a maximum wait time for playback
-            start_time = time.time()
-            while pygame.mixer.music.get_busy():
+        # This part will only execute if no errors occur in the try block
+        else:  
+            pygame.mixer.music.set_volume(1.0)   # Set the volume
+            pygame.mixer.music.play()   # Play the sound effect
+
+            start_time = time.time()     
+            while pygame.mixer.music.get_busy():   # Limit playback duration to a maximum of 10 seconds
                 if time.time() - start_time > 10:
                     break
-                time.sleep(0.1)
-        except Exception as e:
-            print(f"Error playing sound {sound_files[sound_name]}: {e}")
-    else:
+                time.sleep(0.1)   # Check if the music is still playing every 0.1 seconds to reduce CPU usage
+
+    else:   # If sound_name is not in sound_files or the corresponding sound file does not exist
         print(f"Error: {sound_files.get(sound_name, 'Unknown')} not found.")
+
+
 
 def draw_diamond(layers):
     """
