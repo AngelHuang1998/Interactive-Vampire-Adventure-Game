@@ -18,13 +18,10 @@ An interactive storytelling game written in Python that combines **romance, vamp
 
 1. 安裝 Python（建議 3.9+）
 2. 安裝 pygame 模組：
-
 ```bash
 pip install pygame
 ```
-
 3. 執行主程式:
-   
 ```bash
 python final_VampireStory.py
 ```
